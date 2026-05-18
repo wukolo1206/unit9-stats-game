@@ -149,6 +149,7 @@ var counts = { '麵':0, '飯':0, '麵包':0, '湯麵':0 };
 var cardsDone = 0;
 var totalDone = false;
 var q1Done = false;
+var q2Done = false;
 
 function shake(el) {
   el.classList.remove('shake');
@@ -299,7 +300,9 @@ function answerQ1(food, btn) {
 }
 
 function answerQ2(val, btn) {
+  if (q2Done) return;
   if (val === APP_Q2_ANS) {
+    q2Done = true;
     btn.classList.add('correct');
     showCheck();
     setTimeout(function(){
