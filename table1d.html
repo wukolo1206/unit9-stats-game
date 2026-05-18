@@ -306,11 +306,7 @@ function loadBlank(idx) {
   var b = BLANKS[idx];
   var curT = b.t;
 
-  var remaining = [];
-  for (var i = idx; i < BLANKS.length; i++) {
-    if (BLANKS[i].t === curT) remaining.push({ r: BLANKS[i].r });
-  }
-  buildTable(curT, remaining, -99);
+  buildTable(curT, [{ r: b.r }], -99);
 
   for (var j = 0; j < idx; j++) {
     var prev = BLANKS[j];
