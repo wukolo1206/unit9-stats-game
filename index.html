@@ -12,12 +12,9 @@
             padding: 28px 20px 24px; text-align: center; color: #fff; }
     .hero-sub { font-size: 13px; letter-spacing: 2px; opacity: .75; margin-bottom: 6px; }
     .hero-title { font-size: 26px; font-weight: bold; }
-    .wrap { max-width: 680px; margin: 0 auto; padding: 16px 12px;
-            display: flex; flex-direction: column; gap: 12px; }
-    .section-label { font-size: 13px; font-weight: bold; color: #aaa;
-                     letter-spacing: 1px; padding-left: 4px; }
-    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    @media (max-width: 400px) { .cards { grid-template-columns: 1fr; } }
+    .wrap { max-width: 900px; margin: 0 auto; padding: 20px 12px; }
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    @media (max-width: 600px) { .cards { grid-template-columns: 1fr; } }
     .card { background: #fff; border-radius: 18px; overflow: hidden;
             box-shadow: 0 2px 12px rgba(74,108,247,.10);
             text-decoration: none; color: inherit;
@@ -42,38 +39,31 @@
   <div class="hero-title">統計表</div>
 </div>
 <div class="wrap">
-  <div class="section-label">活動一 · 讀一維表格</div>
   <div class="cards">
     <a class="card" href="table1d.html">
       <div class="card-top" style="background:linear-gradient(90deg,#0984e3,#74b9ff)"></div>
       <div class="card-body">
-        <div class="seq">觀察</div>
+        <div class="seq">活動一 · 觀察</div>
         <div class="card-icon">📊</div>
         <div class="card-title">讀一維表格</div>
         <div class="card-desc">點選類別，找到對應的數字。查值、填空、反推三關練習。</div>
         <div class="card-go" style="color:#0984e3">開始 →</div>
       </div>
     </a>
-  </div>
-  <div class="section-label">活動二 · 讀二維表格</div>
-  <div class="cards">
     <a class="card" href="table2d.html">
       <div class="card-top" style="background:linear-gradient(90deg,#e17055,#fdcb6e)"></div>
       <div class="card-body">
-        <div class="seq">發現</div>
+        <div class="seq">活動二 · 發現</div>
         <div class="card-icon">🗺️</div>
         <div class="card-title">讀二維表格</div>
         <div class="card-desc">行 × 欄 → 交叉格。統計表、時刻表、票價表三種情境練習。</div>
         <div class="card-go" style="color:#e17055">開始 →</div>
       </div>
     </a>
-  </div>
-  <div class="section-label">活動三 · 製作統計表</div>
-  <div class="cards">
     <a class="card" href="make-table.html">
       <div class="card-top" style="background:linear-gradient(90deg,#6c5ce7,#a29bfe)"></div>
       <div class="card-body">
-        <div class="seq">練習</div>
+        <div class="seq">活動三 · 練習</div>
         <div class="card-icon">✏️</div>
         <div class="card-title">製作統計表</div>
         <div class="card-desc">從原始資料卡片計數，自己填入統計表，再回答應用題。</div>
