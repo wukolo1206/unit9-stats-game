@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>製作統計表</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Noto Sans TC', sans-serif; background: #f0f4ff; min-height: 100vh; }
+
+    .hero { background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            padding: 20px; text-align: center; color: #fff; }
+    .hero-back { font-size: 13px; opacity: .8; text-decoration: none; color: #fff;
+                 display: inline-block; margin-bottom: 8px; }
+    .hero-title { font-size: 20px; font-weight: bold; }
+
+    .prog-wrap { background: #fff; padding: 10px 16px; display: flex;
+                 align-items: center; gap: 10px; border-bottom: 1px solid #eee; }
+    .prog-bar { flex: 1; height: 8px; background: #e8eaf6; border-radius: 4px; overflow: hidden; }
+    .prog-fill { height: 100%; background: #6c5ce7; border-radius: 4px; transition: width .4s; }
+    .prog-label { font-size: 12px; color: #888; white-space: nowrap; }
+
+    .wrap { max-width: 680px; margin: 0 auto; padding: 12px 12px 24px; }
+
+    .step-label { font-size: 11px; font-weight: bold; color: #6c5ce7; letter-spacing: 1px;
+                  margin-bottom: 8px; text-transform: uppercase; }
+
+    .cards-area { background: #fff; border-radius: 16px; padding: 16px;
+                  box-shadow: 0 2px 12px rgba(108,92,231,.10); margin-bottom: 14px; }
+    .cards-area h3 { font-size: 14px; color: #555; margin-bottom: 12px; }
+    .card-pile { display: flex; flex-wrap: wrap; gap: 8px; min-height: 48px; }
+    .food-card { background: #f0f0ff; border: 2px solid #6c5ce7; border-radius: 10px;
+                 padding: 8px 14px; font-size: 14px; font-weight: bold; color: #6c5ce7;
+                 cursor: pointer; transition: all .15s; user-select: none; -webkit-tap-highlight-color: transparent; }
+    .food-card:active { transform: scale(.95); }
+    .food-card.used { opacity: 0; pointer-events: none; transition: opacity .3s; }
+
+    .tbl-wrap { background: #fff; border-radius: 16px; overflow: hidden;
+                box-shadow: 0 2px 12px rgba(108,92,231,.10); margin-bottom: 14px; }
+    table { width: 100%; border-collapse: collapse; font-size: 15px; }
+    th, td { padding: 12px 8px; text-align: center; border-bottom: 1px solid #f0f0f0; }
+    th { background: #f3f0ff; font-weight: bold; color: #6c5ce7; }
+    .count-cell { font-size: 18px; font-weight: bold; color: #333; min-width: 48px; }
+    .count-cell.active { background: #f3f0ff; }
+    @keyframes bump { 0%{transform:scale(1)} 50%{transform:scale(1.4)} 100%{transform:scale(1)} }
+    .bump { animation: bump 0.25s ease; }
+
+    .total-cell { background: #ffeaa7; cursor: pointer; border-radius: 8px; }
+    .total-cell.filled { background: #d4edda; cursor: default; }
+
+    .opts-wrap { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+                 padding: 10px; background: #f8f9ff; border-top: 1px solid #eee; }
+    .opt-btn { padding: 10px 20px; border-radius: 10px; border: 2px solid #6c5ce7;
+               background: #fff; font-size: 15px; font-weight: bold; color: #6c5ce7;
+               cursor: pointer; font-family: inherit; }
+    .opt-btn:active { transform: scale(.95); }
+
+    .q-card { background: #fff; border-radius: 16px; padding: 16px 20px;
+              box-shadow: 0 2px 12px rgba(108,92,231,.10); margin-bottom: 12px;
+              font-size: 15px; font-weight: bold; color: #333; }
+    .q-opts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .q-opt { padding: 8px 16px; border-radius: 10px; border: 2px solid #6c5ce7;
+             background: #fff; font-size: 14px; color: #6c5ce7; cursor: pointer;
+             font-family: inherit; font-weight: bold; }
+    .q-opt.correct { background: #00b894; border-color: #00b894; color: #fff; }
+    .q-opt.wrong { background: #ff7675; border-color: #ff7675; color: #fff; }
+
+    .done-banner { background: #6c5ce7; color: #fff; border-radius: 16px;
+                   padding: 24px; text-align: center; display: none; }
+    .done-banner h2 { font-size: 22px; margin-bottom: 8px; }
+    .done-banner p { font-size: 14px; opacity: .85; margin-bottom: 16px; }
+    .next-btn { background: #fff; color: #6c5ce7; border: none; border-radius: 10px;
+                padding: 10px 28px; font-size: 15px; font-weight: bold; cursor: pointer; }
+
+    .check-overlay { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+                     font-size: 72px; pointer-events: none; z-index: 100; opacity: 0; transition: opacity .2s; }
+    .check-overlay.show { opacity: 1; }
+
+    @keyframes shake {
+      0%,100%{transform:translateX(0)}
+      20%{transform:translateX(-6px)} 40%{transform:translateX(6px)}
+      60%{transform:translateX(-4px)} 80%{transform:translateX(4px)}
+    }
+    .shake { animation: shake 0.4s ease; }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <a class="hero-back" href="index.html">← 返回</a>
+  <div class="hero-title">✏️ 製作統計表</div>
+</div>
+
+<div class="prog-wrap">
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  <div class="prog-label" id="progLabel">0 / 20</div>
+</div>
+
+<div class="wrap">
+  <div class="step-label" id="stepLabel">步驟一：點卡片，計入統計表</div>
+
+  <div class="cards-area" id="cardsArea">
+    <h3>午餐喜好調查卡（共 20 張）— 逐一點選，計入表格</h3>
+    <div class="card-pile" id="cardPile"></div>
+  </div>
+
+  <div class="tbl-wrap">
+    <table id="statsTable">
+      <thead><tr><th>食物</th><th>人數</th></tr></thead>
+      <tbody id="statsBody"></tbody>
+    </table>
+    <div class="opts-wrap" id="optsWrap" style="display:none;"></div>
+  </div>
+
+  <div id="appSection" style="display:none;">
+    <div class="step-label">步驟三：應用題</div>
+    <div class="q-card" id="appQ1">
+      <div>哪種食物最多人喜歡？</div>
+      <div class="q-opts" id="appQ1Opts"></div>
+    </div>
+    <div class="q-card" id="appQ2" style="display:none;">
+      <div>喜歡「飯」的比喜歡「麵包」的多幾人？</div>
+      <div class="q-opts" id="appQ2Opts"></div>
+    </div>
+  </div>
+
+  <div class="done-banner" id="doneBanner">
+    <h2>🎉 完成！</h2>
+    <p>你已經學會從原始資料製作統計表了！</p>
+    <button class="next-btn" onclick="window.location.href='index.html'">返回首頁</button>
+  </div>
+</div>
+
+<div class="check-overlay" id="checkOverlay">✅</div>
+
+<script>
+var CARDS_DATA = ['麵','麵','麵','麵','麵','麵',
+                  '飯','飯','飯','飯','飯','飯','飯',
+                  '麵包','麵包','麵包','麵包',
+                  '湯麵','湯麵','湯麵'];
+var CORRECT_COUNTS = { '麵':6, '飯':7, '麵包':4, '湯麵':3 };
+var FOOD_LABELS = ['麵','飯','麵包','湯麵'];
+var TOTAL_ANS = 20;
+var APP_Q1_ANS = '飯';
+var APP_Q2_ANS = 3;
+
+var counts = { '麵':0, '飯':0, '麵包':0, '湯麵':0 };
+var cardsDone = 0;
+var totalDone = false;
+var q1Done = false;
+
+function shake(el) {
+  el.classList.remove('shake');
+  void el.offsetWidth;
+  el.classList.add('shake');
+  setTimeout(function(){ el.classList.remove('shake'); }, 400);
+}
+
+function showCheck() {
+  var ov = document.getElementById('checkOverlay');
+  ov.classList.add('show');
+  setTimeout(function(){ ov.classList.remove('show'); }, 600);
+}
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+function init() {
+  var pile = document.getElementById('cardPile');
+  var shuffled = shuffle(CARDS_DATA);
+  shuffled.forEach(function(food, i) {
+    var card = document.createElement('div');
+    card.className = 'food-card';
+    card.textContent = food;
+    card.dataset.food = food;
+    card.dataset.idx = i;
+    card.onclick = function(){ onCardClick(card); };
+    pile.appendChild(card);
+  });
+
+  var tbody = document.getElementById('statsBody');
+  FOOD_LABELS.forEach(function(food) {
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td style="font-weight:bold;color:#555;">'+food+'</td>' +
+      '<td class="count-cell" id="count-'+food+'">0</td>';
+    tbody.appendChild(tr);
+  });
+
+  var totalRow = document.createElement('tr');
+  totalRow.id = 'totalRow';
+  totalRow.style.display = 'none';
+  totalRow.innerHTML = '<td style="font-weight:bold;color:#6c5ce7;">合計</td>' +
+    '<td class="count-cell total-cell" id="totalCell" onclick="onTotalClick()">？</td>';
+  tbody.appendChild(totalRow);
+}
+
+function onCardClick(card) {
+  if (card.classList.contains('used')) return;
+  var food = card.dataset.food;
+  card.classList.add('used');
+  counts[food]++;
+  cardsDone++;
+
+  var cell = document.getElementById('count-'+food);
+  cell.textContent = counts[food];
+  cell.classList.add('bump');
+  setTimeout(function(){ cell.classList.remove('bump'); }, 250);
+
+  updateProgress(cardsDone, 20);
+
+  if (cardsDone >= 20) {
+    setTimeout(startStep2, 600);
+  }
+}
+
+function updateProgress(done, total) {
+  document.getElementById('progFill').style.width = (done/total*100) + '%';
+  document.getElementById('progLabel').textContent = done + ' / ' + total;
+}
+
+function startStep2() {
+  document.getElementById('stepLabel').textContent = '步驟二：算出合計，填入表格';
+  document.getElementById('totalRow').style.display = '';
+  document.getElementById('cardsArea').style.opacity = '0.4';
+  showCheck();
+}
+
+function onTotalClick() {
+  if (totalDone) return;
+  var optsWrap = document.getElementById('optsWrap');
+  optsWrap.style.display = 'flex';
+  optsWrap.innerHTML = '';
+  [18, 20, 22].forEach(function(v) {
+    var btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = v + ' 人';
+    btn.onclick = function() { selectTotal(v, btn, optsWrap); };
+    optsWrap.appendChild(btn);
+  });
+}
+
+function selectTotal(val, btn, wrap) {
+  if (val === TOTAL_ANS) {
+    var cell = document.getElementById('totalCell');
+    cell.textContent = TOTAL_ANS;
+    cell.className = 'count-cell filled';
+    wrap.style.display = 'none';
+    totalDone = true;
+    showCheck();
+    setTimeout(startStep3, 700);
+  } else {
+    shake(btn);
+  }
+}
+
+function startStep3() {
+  document.getElementById('stepLabel').textContent = '步驟三：應用題';
+  document.getElementById('appSection').style.display = 'block';
+  var q1Opts = document.getElementById('appQ1Opts');
+  FOOD_LABELS.forEach(function(food) {
+    var btn = document.createElement('button');
+    btn.className = 'q-opt';
+    btn.textContent = food;
+    btn.onclick = function() { answerQ1(food, btn); };
+    q1Opts.appendChild(btn);
+  });
+  document.getElementById('appSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function answerQ1(food, btn) {
+  if (q1Done) return;
+  if (food === APP_Q1_ANS) {
+    btn.classList.add('correct');
+    q1Done = true;
+    showCheck();
+    setTimeout(function() {
+      document.getElementById('appQ2').style.display = 'block';
+      var q2Opts = document.getElementById('appQ2Opts');
+      [1, 3, 5].forEach(function(v) {
+        var b = document.createElement('button');
+        b.className = 'q-opt';
+        b.textContent = v + ' 人';
+        b.onclick = function() { answerQ2(v, b); };
+        q2Opts.appendChild(b);
+      });
+    }, 600);
+  } else {
+    btn.classList.add('wrong');
+    shake(btn);
+    setTimeout(function(){ btn.classList.remove('wrong'); }, 500);
+  }
+}
+
+function answerQ2(val, btn) {
+  if (val === APP_Q2_ANS) {
+    btn.classList.add('correct');
+    showCheck();
+    setTimeout(function(){
+      document.getElementById('doneBanner').style.display = 'block';
+      document.getElementById('doneBanner').scrollIntoView({ behavior: 'smooth' });
+    }, 700);
+  } else {
+    btn.classList.add('wrong');
+    shake(btn);
+    setTimeout(function(){ btn.classList.remove('wrong'); }, 500);
+  }
+}
+
+init();
+</script>
+</body>
+</html>
