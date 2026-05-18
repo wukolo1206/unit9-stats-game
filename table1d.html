@@ -9,65 +9,58 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Noto Sans TC', sans-serif; background: #f0f4ff; min-height: 100vh; }
 
-    /* Hero */
     .hero { background: linear-gradient(135deg, #0984e3, #74b9ff);
             padding: 20px; text-align: center; color: #fff; }
     .hero-back { font-size: 13px; opacity: .8; text-decoration: none; color: #fff;
                  display: inline-block; margin-bottom: 8px; }
     .hero-title { font-size: 20px; font-weight: bold; }
 
-    /* Progress */
     .prog-wrap { background: #fff; padding: 10px 16px; display: flex;
                  align-items: center; gap: 10px; border-bottom: 1px solid #eee; }
     .prog-bar { flex: 1; height: 8px; background: #e8eaf6; border-radius: 4px; overflow: hidden; }
     .prog-fill { height: 100%; background: #0984e3; border-radius: 4px; transition: width .4s; }
     .prog-label { font-size: 12px; color: #888; white-space: nowrap; }
 
-    /* Stage tabs */
-    .stage-tabs { display: flex; gap: 0; background: #fff; border-bottom: 2px solid #e0e7ff; }
+    .stage-tabs { display: flex; background: #fff; border-bottom: 2px solid #e0e7ff; }
     .stage-tab { flex: 1; padding: 10px; text-align: center; font-size: 13px; font-weight: bold;
                  color: #aaa; cursor: default; }
     .stage-tab.active { color: #0984e3; border-bottom: 2px solid #0984e3; margin-bottom: -2px; }
 
-    /* Main content */
-    .wrap { max-width: 680px; margin: 0 auto; padding: 16px 12px; }
+    .wrap { max-width: 480px; margin: 0 auto; padding: 16px 12px; }
 
-    /* Question card */
     .q-card { background: #fff; border-radius: 16px; padding: 16px 20px;
-              box-shadow: 0 2px 12px rgba(74,108,247,.10); margin-bottom: 14px;
+              box-shadow: 0 2px 12px rgba(74,108,247,.10); margin-bottom: 10px;
               font-size: 15px; font-weight: bold; color: #333; line-height: 1.6; }
     .q-hint { font-size: 12px; color: #0984e3; margin-top: 6px; font-weight: normal; }
 
-    /* Table */
+    .tbl-title { text-align: center; font-size: 12px; color: #777; font-weight: bold;
+                 margin-bottom: 6px; }
+
     .tbl-wrap { background: #fff; border-radius: 16px; overflow: hidden;
-                box-shadow: 0 2px 12px rgba(74,108,247,.10); }
-    table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    th, td { padding: 10px 8px; text-align: center; border-bottom: 1px solid #f0f0f0; }
+                box-shadow: 0 2px 12px rgba(74,108,247,.10); margin-bottom: 14px; }
+    table { width: 100%; border-collapse: collapse; font-size: 15px; }
+    th, td { padding: 13px 16px; border-bottom: 1px solid #f0f0f0; text-align: center; }
     th { background: #f8f9ff; font-weight: bold; color: #555; }
-    .row-hdr { font-weight: bold; color: #444; cursor: pointer; transition: background .15s; }
-    .col-hdr { cursor: pointer; transition: background .15s; }
-    .data-cell { cursor: pointer; transition: all .2s; }
-    .total-row td, .total-row th { background: #f0f4ff; font-weight: bold; color: #0984e3; }
+    th:first-child { text-align: left; padding-left: 24px; }
 
-    /* Highlight states */
-    .row-hdr.hl-row { background: #ffe3e0 !important; color: #c0392b !important; }
-    .col-hdr.hl-col { background: #dbeeff !important; color: #2980b9 !important; }
-    .data-cell.hl-row-cell { background: #ffe8e6; }
-    .data-cell.hl-col-cell { background: #dbeeff; }
-    .data-cell.hl-cross {
-      background: #e74c3c !important; color: white !important;
-      font-weight: bold; transform: scale(1.25); border-radius: 6px;
-      box-shadow: 0 2px 8px rgba(231,76,60,.4); opacity: 1 !important;
-    }
-    .data-cell.dim { opacity: 0.15; }
+    .row-lbl { text-align: left; padding-left: 24px; font-weight: bold; color: #444;
+               cursor: pointer; transition: background .15s, color .15s; }
+    .row-lbl:hover { background: #f0f7ff; }
+    .row-lbl.selected { background: #0984e3; color: #fff; }
 
-    /* Correct checkmark overlay */
-    .check-overlay { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
-                     font-size: 72px; pointer-events: none; z-index: 100;
-                     opacity: 0; transition: opacity .2s; }
-    .check-overlay.show { opacity: 1; }
+    .val-cell { font-size: 15px; transition: all .2s; min-width: 60px; }
+    .val-cell.hl-val { background: #fdcb6e; font-weight: bold; font-size: 18px;
+                       border-radius: 6px; }
+    .val-cell.hl-correct { background: #00b894; color: #fff; font-weight: bold;
+                           border-radius: 6px; }
 
-    /* Done banner */
+    .total-row td { background: #f0f4ff; font-weight: bold; color: #0984e3; }
+    .total-row .row-lbl { cursor: default; color: #0984e3; }
+    .total-row .row-lbl:hover { background: #f0f4ff; }
+
+    .blank-cell { background: #ffeaa7; cursor: pointer; font-weight: bold; color: #999; }
+    .blank-cell:hover { background: #ffd93d; }
+
     .done-banner { background: #00b894; color: #fff; border-radius: 16px;
                    padding: 24px; text-align: center; display: none; }
     .done-banner h2 { font-size: 22px; margin-bottom: 8px; }
@@ -75,7 +68,11 @@
     .next-btn { background: #fff; color: #00b894; border: none; border-radius: 10px;
                 padding: 10px 28px; font-size: 15px; font-weight: bold; cursor: pointer; }
 
-    /* Shake */
+    .check-overlay { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+                     font-size: 72px; pointer-events: none; z-index: 100;
+                     opacity: 0; transition: opacity .2s; }
+    .check-overlay.show { opacity: 1; }
+
     @keyframes shake {
       0%,100%{transform:translateX(0)}
       20%{transform:translateX(-6px)} 40%{transform:translateX(6px)}
@@ -107,14 +104,11 @@
     <div id="qText">載入中...</div>
     <div class="q-hint" id="qHint"></div>
   </div>
-
-  <div class="tbl-wrap" id="tblWrap">
-    <!-- table injected by JS -->
-  </div>
-
+  <div class="tbl-title" id="tblTitle"></div>
+  <div class="tbl-wrap" id="tblWrap"></div>
   <div class="done-banner" id="doneBanner">
     <h2>🎉 關卡完成！</h2>
-    <p id="doneText">查值練習完成，繼續下一關！</p>
+    <p id="doneText"></p>
     <button class="next-btn" id="nextBtn">下一關 →</button>
   </div>
 </div>
@@ -122,199 +116,167 @@
 <div class="check-overlay" id="checkOverlay">✅</div>
 
 <script>
-var DATA = [
-  [12, 8, 15, 5],
-  [9, 14, 11, 6],
-  [16, 7, 13, 4],
-  [10, 11, 9, 10]
+var TABLES = [
+  {
+    title: '三甲班最喜歡的運動統計表',
+    colLabel: '運動項目',
+    rows: ['籃球', '跑步', '游泳', '羽球'],
+    vals: [12, 8, 15, 5],
+    total: 40
+  },
+  {
+    title: '三年級最喜歡的水果統計表',
+    colLabel: '水果種類',
+    rows: ['蘋果', '香蕉', '芒果', '葡萄'],
+    vals: [18, 11, 9, 12],
+    total: 50
+  },
+  {
+    title: '三甲班家中飼養寵物統計表',
+    colLabel: '寵物種類',
+    rows: ['狗', '貓', '魚', '其他'],
+    vals: [10, 7, 6, 3],
+    total: 26
+  }
 ];
-var ROW_LABELS = ['三甲','三乙','三丙','三丁'];
-var COL_LABELS = ['籃球','跑步','游泳','羽球'];
-var ROW_TOTALS = [40, 40, 40, 40];
-var COL_TOTALS = [47, 40, 48, 25];
-var GRAND_TOTAL = 160;
 
 var Q1 = [
-  { row: 1, col: 1, text: '三乙班喜歡跑步的有幾人？' },
-  { row: 0, col: 2, text: '三甲班喜歡游泳的有幾人？' },
-  { row: 2, col: 0, text: '三丙班喜歡籃球的有幾人？' },
-  { row: 3, col: 3, text: '三丁班喜歡羽球的有幾人？' }
+  { t: 0, r: 1, text: '三甲班喜歡跑步的有幾人？' },
+  { t: 0, r: 2, text: '三甲班喜歡游泳的有幾人？' },
+  { t: 1, r: 0, text: '三年級最喜歡蘋果的有幾人？' },
+  { t: 1, r: 3, text: '三年級最喜歡葡萄的有幾人？' }
+];
+
+var BLANKS = [
+  { t: 0, r: 0,  ans: 12, opts: [9, 12, 15],   q: '三甲班喜歡籃球的有幾人？' },
+  { t: 0, r: 3,  ans: 5,  opts: [3, 5, 8],     q: '三甲班喜歡羽球的有幾人？' },
+  { t: 0, r: -1, ans: 40, opts: [38, 40, 42],  q: '把四項運動的人數加起來，合計是多少？' },
+  { t: 1, r: 1,  ans: 11, opts: [9, 11, 13],   q: '三年級最喜歡香蕉的有幾人？' },
+  { t: 2, r: 2,  ans: 6,  opts: [5, 6, 8],     q: '三甲班家中飼養魚的有幾人？' },
+  { t: 2, r: -1, ans: 26, opts: [24, 26, 28],  q: '把四種寵物的人數加起來，合計是多少？' }
+];
+
+var Q3 = [
+  { t: 0, r: 1, text: '橘色數字代表哪一項運動的人數？' },
+  { t: 0, r: 2, text: '橘色數字代表哪一項運動的人數？' },
+  { t: 2, r: 1, text: '橘色數字代表哪一種寵物的人數？' }
 ];
 
 var stage = 1;
-var qIdx  = 0;
-var selRow = -1;
-var selCol = -1;
+var q1Idx = 0;
+var blankIdx = 0;
+var q3Idx = 0;
+var optionsEl = null;
 
 function shake(el) {
   el.classList.remove('shake');
   void el.offsetWidth;
   el.classList.add('shake');
-  setTimeout(function(){ el.classList.remove('shake'); }, 400);
+  setTimeout(function() { el.classList.remove('shake'); }, 400);
 }
 
 function showCheck() {
   var ov = document.getElementById('checkOverlay');
   ov.classList.add('show');
-  setTimeout(function(){ ov.classList.remove('show'); }, 600);
+  setTimeout(function() { ov.classList.remove('show'); }, 600);
 }
 
 function updateProgress(done, total) {
-  document.getElementById('progFill').style.width = (done/total*100) + '%';
+  document.getElementById('progFill').style.width = (done / total * 100) + '%';
   document.getElementById('progLabel').textContent = done + ' / ' + total;
 }
 
-function buildTable(showTotals, blankCells) {
-  blankCells = blankCells || [];
+function buildTable(tIdx, blanks, hlValRow) {
+  blanks = blanks || [];
+  hlValRow = (hlValRow !== undefined) ? hlValRow : -99;
+  var tbl = TABLES[tIdx];
+  document.getElementById('tblTitle').textContent = tbl.title;
+
   var html = '<table><thead><tr>';
-  html += '<th>　</th>';
-  for (var c = 0; c < 4; c++) {
-    html += '<th class="col-hdr" data-col="'+c+'" onclick="onColClick('+c+')">'+COL_LABELS[c]+'</th>';
-  }
-  if (showTotals) html += '<th>合計</th>';
+  html += '<th>' + tbl.colLabel + '</th>';
+  html += '<th>人數</th>';
   html += '</tr></thead><tbody>';
 
-  for (var r = 0; r < 4; r++) {
+  for (var r = 0; r < tbl.rows.length; r++) {
+    var isBlank = blanks.some(function(b) { return b.r === r; });
+    var isHlVal = (hlValRow === r);
     html += '<tr>';
-    html += '<td class="row-hdr" data-row="'+r+'" onclick="onRowClick('+r+')">'+ROW_LABELS[r]+'</td>';
-    for (var cc = 0; cc < 4; cc++) {
-      var isBlank = blankCells.some(function(b){ return b.r===r && b.c===cc; });
-      if (isBlank) {
-        html += '<td class="data-cell blank-cell" id="cell-'+r+'-'+cc+'" data-r="'+r+'" data-c="'+cc+'" onclick="onBlankClick('+r+','+cc+')" style="background:#ffeaa7;cursor:pointer;">？</td>';
-      } else {
-        html += '<td class="data-cell" id="cell-'+r+'-'+cc+'" data-r="'+r+'" data-c="'+cc+'" onclick="onCellClick('+r+','+cc+')">'+DATA[r][cc]+'</td>';
-      }
-    }
-    if (showTotals) {
-      var isBlankTotal = blankCells.some(function(b){ return b.r===r && b.c===4; });
-      if (isBlankTotal) {
-        html += '<td class="data-cell blank-cell" id="cell-'+r+'-4" data-r="'+r+'" data-c="4" onclick="onBlankClick('+r+',4)" style="background:#ffeaa7;cursor:pointer;">？</td>';
-      } else {
-        html += '<td style="color:#0984e3;font-weight:bold;">'+ROW_TOTALS[r]+'</td>';
-      }
+    html += '<td class="row-lbl" id="lbl-' + r + '" onclick="onLabelClick(' + r + ')">';
+    html += tbl.rows[r] + '</td>';
+    if (isBlank) {
+      html += '<td class="val-cell blank-cell" id="val-' + r + '" onclick="onBlankClick(' + r + ')">？</td>';
+    } else {
+      html += '<td class="val-cell' + (isHlVal ? ' hl-val' : '') + '" id="val-' + r + '">';
+      html += tbl.vals[r] + '</td>';
     }
     html += '</tr>';
   }
 
-  if (showTotals) {
-    html += '<tr class="total-row"><th>合計</th>';
-    for (var tc = 0; tc < 4; tc++) {
-      var isBlankCol = blankCells.some(function(b){ return b.r===4 && b.c===tc; });
-      if (isBlankCol) {
-        html += '<td class="data-cell blank-cell" id="cell-4-'+tc+'" data-r="4" data-c="'+tc+'" onclick="onBlankClick(4,'+tc+')" style="background:#ffeaa7;cursor:pointer;">？</td>';
-      } else {
-        html += '<td>'+COL_TOTALS[tc]+'</td>';
-      }
-    }
-    html += '<td>'+GRAND_TOTAL+'</td></tr>';
+  var isTotalBlank = blanks.some(function(b) { return b.r === -1; });
+  html += '<tr class="total-row">';
+  html += '<td class="row-lbl">合計</td>';
+  if (isTotalBlank) {
+    html += '<td class="val-cell blank-cell" id="val-total" onclick="onBlankClick(-1)">？</td>';
+  } else {
+    html += '<td class="val-cell">' + tbl.total + '</td>';
   }
+  html += '</tr>';
 
   html += '</tbody></table>';
   document.getElementById('tblWrap').innerHTML = html;
 }
 
+// ─── Stage 1：查值 ───
 function loadQ1(idx) {
-  qIdx = idx;
-  selRow = -1; selCol = -1;
+  q1Idx = idx;
   var q = Q1[idx];
   document.getElementById('qText').textContent = q.text;
-  document.getElementById('qHint').textContent = '提示：先點左側班級，再點上方運動項目，最後點交叉格。';
-  buildTable(true, []);
+  document.getElementById('qHint').textContent = '找到對應的那一行，點一下。';
+  buildTable(q.t, [], -99);
   updateProgress(idx, 4);
-  clearHighlights();
+  document.getElementById('doneBanner').style.display = 'none';
 }
 
-function clearHighlights() {
-  document.querySelectorAll('.row-hdr').forEach(function(el){ el.className='row-hdr'; });
-  document.querySelectorAll('.col-hdr').forEach(function(el){ el.className='col-hdr'; });
-  document.querySelectorAll('.data-cell').forEach(function(el){
-    el.classList.remove('hl-row-cell','hl-col-cell','hl-cross','dim');
-  });
-}
-
-function onRowClick(r) {
+function onLabelClick(r) {
   if (stage === 1) {
-    selRow = r;
-    applyHighlight();
+    var q = Q1[q1Idx];
+    if (r === q.r) {
+      var lbl = document.getElementById('lbl-' + r);
+      var val = document.getElementById('val-' + r);
+      lbl.classList.add('selected');
+      if (val) val.classList.add('hl-correct');
+      showCheck();
+      updateProgress(q1Idx + 1, 4);
+      if (q1Idx + 1 >= 4) {
+        setTimeout(showStage1Done, 800);
+      } else {
+        setTimeout(function() { loadQ1(q1Idx + 1); }, 800);
+      }
+    } else {
+      shake(document.getElementById('lbl-' + r));
+      document.getElementById('qHint').textContent = '再想想，題目問的是哪一項？';
+    }
     return;
   }
+
   if (stage === 3) {
-    if (reverseStep !== 0) return;
-    var q = Q3[q3Idx];
-    if (r === q.r) {
-      selRow = r;
-      reverseStep = 1;
-      document.querySelectorAll('.row-hdr').forEach(function(el){
-        el.classList.toggle('hl-row', parseInt(el.dataset.row) === r);
-      });
-      document.getElementById('qHint').textContent = '對！再點上方的運動項目。';
+    var q3 = Q3[q3Idx];
+    if (r === q3.r) {
+      var lbl3 = document.getElementById('lbl-' + r);
+      var val3 = document.getElementById('val-' + r);
+      if (lbl3) lbl3.classList.add('selected');
+      if (val3) val3.classList.add('hl-correct');
+      showCheck();
+      updateProgress(q3Idx + 1, 3);
+      if (q3Idx + 1 >= 3) {
+        setTimeout(showStage3Done, 800);
+      } else {
+        q3Idx++;
+        setTimeout(function() { loadQ3(q3Idx); }, 800);
+      }
     } else {
-      shake(document.querySelectorAll('.row-hdr')[r]);
-      document.getElementById('qHint').textContent = '再想想看，這個數字是哪個班的？';
-    }
-  }
-}
-
-function onColClick(c) {
-  if (stage !== 1 && stage !== 3) return;
-  selCol = c;
-  if (stage === 1) applyHighlight();
-  if (stage === 3) checkReverse2(c);
-}
-
-function applyHighlight() {
-  document.querySelectorAll('.row-hdr').forEach(function(el){
-    var rr = parseInt(el.dataset.row);
-    el.className = 'row-hdr' + (rr===selRow ? ' hl-row' : '');
-  });
-  document.querySelectorAll('.col-hdr').forEach(function(el){
-    var cc = parseInt(el.dataset.col);
-    el.className = 'col-hdr' + (cc===selCol ? ' hl-col' : '');
-  });
-  document.querySelectorAll('.data-cell').forEach(function(el){
-    var rr = parseInt(el.dataset.r);
-    var cc = parseInt(el.dataset.c);
-    el.classList.remove('hl-row-cell','hl-col-cell','hl-cross','dim');
-    if (rr===selRow && cc===selCol && selRow>=0 && selCol>=0) {
-      el.classList.add('hl-cross');
-    } else if (rr===selRow && selRow>=0) {
-      el.classList.add('hl-row-cell');
-      if (selCol>=0) el.classList.add('dim');
-    } else if (cc===selCol && selCol>=0) {
-      el.classList.add('hl-col-cell');
-      if (selRow>=0) el.classList.add('dim');
-    } else if (selRow>=0 || selCol>=0) {
-      el.classList.add('dim');
-    }
-  });
-  if (selRow>=0 && selCol>=0) {
-    var cross = document.getElementById('cell-'+selRow+'-'+selCol);
-    if (cross) {
-      cross.classList.remove('dim','hl-row-cell','hl-col-cell');
-      cross.classList.add('hl-cross');
-    }
-  }
-}
-
-function onCellClick(r, c) {
-  if (stage !== 1) return;
-  var q = Q1[qIdx];
-  if (r === q.row && c === q.col && selRow === q.row && selCol === q.col) {
-    showCheck();
-    updateProgress(qIdx + 1, 4);
-    if (qIdx + 1 >= 4) {
-      setTimeout(showStage1Done, 700);
-    } else {
-      setTimeout(function(){ loadQ1(qIdx + 1); }, 700);
-    }
-  } else {
-    shake(document.getElementById('cell-'+r+'-'+c));
-    if (selRow < 0) {
-      document.getElementById('qHint').textContent = '先點左側的班級名稱！';
-    } else if (selCol < 0) {
-      document.getElementById('qHint').textContent = '再點上方的運動項目！';
-    } else {
-      document.getElementById('qHint').textContent = '再想想看，點了對的行和欄嗎？';
+      shake(document.getElementById('lbl-' + r));
+      document.getElementById('qHint').textContent = '再想想，橘色的數字是哪一行的？';
     }
   }
 }
@@ -323,99 +285,95 @@ function showStage1Done() {
   document.getElementById('doneBanner').style.display = 'block';
   document.getElementById('doneBanner').style.background = '#0984e3';
   document.getElementById('doneText').textContent = '查值練習完成！繼續到關卡二：填空。';
-  document.getElementById('nextBtn').onclick = function(){ startStage2(); };
+  document.getElementById('nextBtn').textContent = '下一關 →';
+  document.getElementById('nextBtn').onclick = function() { startStage2(); };
 }
 
-// ─── Stage 2: 填空 ───
-var BLANKS = [
-  { r:0, c:3, ans:5,  opts:[3,5,8] },
-  { r:2, c:1, ans:7,  opts:[6,7,9] },
-  { r:1, c:4, ans:40, opts:[38,40,42] },
-  { r:3, c:4, ans:40, opts:[36,40,44] },
-  { r:4, c:0, ans:47, opts:[44,47,50] },
-  { r:4, c:2, ans:48, opts:[45,48,51] }
-];
-
-var blankIdx = 0;
-var activeBlank = null;
-var optionsEl = null;
-
+// ─── Stage 2：填空 ───
 function startStage2() {
   stage = 2;
   blankIdx = 0;
   document.getElementById('doneBanner').style.display = 'none';
   document.getElementById('tab1').classList.remove('active');
   document.getElementById('tab2').classList.add('active');
-  document.getElementById('qHint').textContent = '';
   updateProgress(0, 6);
   loadBlank(0);
 }
 
 function loadBlank(idx) {
   blankIdx = idx;
-  activeBlank = BLANKS[idx];
-  var blankCells = BLANKS.slice(idx).map(function(b){ return {r:b.r, c:b.c}; });
-  buildTable(true, blankCells);
+  if (optionsEl) { optionsEl.remove(); optionsEl = null; }
+  var b = BLANKS[idx];
+  var curT = b.t;
 
-  for (var i = 0; i < idx; i++) {
-    var b = BLANKS[i];
-    var el = document.getElementById('cell-'+b.r+'-'+b.c);
+  var remaining = [];
+  for (var i = idx; i < BLANKS.length; i++) {
+    if (BLANKS[i].t === curT) remaining.push({ r: BLANKS[i].r });
+  }
+  buildTable(curT, remaining, -99);
+
+  for (var j = 0; j < idx; j++) {
+    var prev = BLANKS[j];
+    if (prev.t !== curT) continue;
+    var elId = (prev.r === -1) ? 'val-total' : 'val-' + prev.r;
+    var el = document.getElementById(elId);
     if (el) {
-      el.textContent = b.ans;
+      el.textContent = prev.ans;
       el.style.background = '#d4edda';
-      el.style.cursor = 'default';
-      el.className = 'data-cell';
+      el.style.border = '';
+      el.className = 'val-cell';
     }
   }
 
-  document.getElementById('qText').textContent = '找到「？」格，算出正確的數字填入。';
-  document.getElementById('qHint').textContent = '點一下「？」格查看選項。';
+  document.getElementById('qText').textContent = b.q;
+  document.getElementById('qHint').textContent = '點一下「？」查看選項。';
   updateProgress(idx, 6);
 
-  var cur = document.getElementById('cell-'+activeBlank.r+'-'+activeBlank.c);
-  if (cur) {
-    cur.style.background = '#ffeaa7';
-    cur.style.border = '2px solid #fdcb6e';
-  }
+  var curId = (b.r === -1) ? 'val-total' : 'val-' + b.r;
+  var cur = document.getElementById(curId);
+  if (cur) cur.style.border = '2px solid #fdcb6e';
 }
 
-function onBlankClick(r, c) {
+function onBlankClick(r) {
   if (stage !== 2) return;
-  if (r !== activeBlank.r || c !== activeBlank.c) return;
-  showOptions(r, c, activeBlank.opts, activeBlank.ans);
+  var b = BLANKS[blankIdx];
+  if (r !== b.r) return;
+  showOptions(r, b.opts, b.ans);
 }
 
-function showOptions(r, c, opts, ans) {
+function showOptions(r, opts, ans) {
   if (optionsEl) optionsEl.remove();
   var wrap = document.createElement('div');
-  wrap.style.cssText = 'display:flex;gap:6px;justify-content:center;margin-top:8px;flex-wrap:wrap;';
-  opts.forEach(function(v){
+  wrap.style.cssText = 'display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap;';
+  opts.forEach(function(v) {
     var btn = document.createElement('button');
     btn.textContent = v;
-    btn.style.cssText = 'padding:8px 16px;border-radius:10px;border:2px solid #0984e3;background:#fff;font-size:14px;font-weight:bold;color:#0984e3;cursor:pointer;font-family:inherit;';
-    btn.onclick = function(){ selectOption(r, c, v, ans, btn, wrap); };
+    btn.style.cssText = 'padding:10px 20px;border-radius:10px;border:2px solid #0984e3;background:#fff;font-size:15px;font-weight:bold;color:#0984e3;cursor:pointer;font-family:inherit;';
+    btn.onclick = function() { selectOption(r, v, ans, btn, wrap); };
     wrap.appendChild(btn);
   });
   optionsEl = wrap;
   document.getElementById('tblWrap').insertAdjacentElement('afterend', wrap);
 }
 
-function selectOption(r, c, val, ans, btn, wrap) {
+function selectOption(r, val, ans, btn, wrap) {
   if (val === ans) {
-    var cell = document.getElementById('cell-'+r+'-'+c);
-    cell.textContent = val;
-    cell.style.background = '#d4edda';
-    cell.style.border = '';
-    cell.style.cursor = 'default';
-    cell.className = 'data-cell';
+    var cellId = (r === -1) ? 'val-total' : 'val-' + r;
+    var cell = document.getElementById(cellId);
+    if (cell) {
+      cell.textContent = val;
+      cell.style.background = '#d4edda';
+      cell.style.border = '';
+      cell.className = 'val-cell';
+    }
     wrap.remove();
     optionsEl = null;
     showCheck();
     updateProgress(blankIdx + 1, 6);
     if (blankIdx + 1 >= 6) {
-      setTimeout(showStage2Done, 700);
+      setTimeout(showStage2Done, 800);
     } else {
-      setTimeout(function(){ loadBlank(blankIdx + 1); }, 700);
+      setTimeout(function() { loadBlank(blankIdx + 1); }, 800);
     }
   } else {
     shake(btn);
@@ -423,26 +381,18 @@ function selectOption(r, c, val, ans, btn, wrap) {
 }
 
 function showStage2Done() {
+  if (optionsEl) { optionsEl.remove(); optionsEl = null; }
   document.getElementById('doneBanner').style.display = 'block';
   document.getElementById('doneBanner').style.background = '#e17055';
   document.getElementById('doneText').textContent = '填空完成！最後一關：反推練習。';
-  document.getElementById('nextBtn').onclick = function(){ startStage3(); };
+  document.getElementById('nextBtn').textContent = '下一關 →';
+  document.getElementById('nextBtn').onclick = function() { startStage3(); };
 }
 
-// ─── Stage 3: 反推 ───
-var Q3 = [
-  { r:1, c:2, text:'表格中這個數字（11）是哪個班的哪項運動人數？' },
-  { r:3, c:0, text:'表格中這個數字（10）是哪個班的哪項運動人數？' },
-  { r:0, c:1, text:'表格中這個數字（8）是哪個班的哪項運動人數？' }
-];
-
-var q3Idx = 0;
-var reverseStep = 0;
-
+// ─── Stage 3：反推 ───
 function startStage3() {
   stage = 3;
   q3Idx = 0;
-  reverseStep = 0;
   document.getElementById('doneBanner').style.display = 'none';
   document.getElementById('tab2').classList.remove('active');
   document.getElementById('tab3').classList.add('active');
@@ -452,55 +402,22 @@ function startStage3() {
 
 function loadQ3(idx) {
   q3Idx = idx;
-  reverseStep = 0;
-  selRow = -1; selCol = -1;
-  buildTable(true, []);
   var q = Q3[idx];
+  buildTable(q.t, [], q.r);
   document.getElementById('qText').textContent = q.text;
-  document.getElementById('qHint').textContent = '先點左側的班級名稱。';
+  document.getElementById('qHint').textContent = '點左側對應的項目名稱。';
   updateProgress(idx, 3);
-  var cell = document.getElementById('cell-'+q.r+'-'+q.c);
-  if (cell) {
-    cell.style.background = '#fdcb6e';
-    cell.style.fontWeight = 'bold';
-    cell.style.fontSize = '16px';
-  }
-}
-
-function checkReverse2(c) {
-  if (stage !== 3 || reverseStep !== 1) return;
-  var q = Q3[q3Idx];
-  if (c === q.c) {
-    var colEls = document.querySelectorAll('.col-hdr');
-    if (colEls[c]) colEls[c].classList.add('hl-col');
-    var cross = document.getElementById('cell-'+q.r+'-'+q.c);
-    if (cross) cross.classList.add('hl-cross');
-    showCheck();
-    updateProgress(q3Idx + 1, 3);
-    if (q3Idx + 1 >= 3) {
-      setTimeout(showStage3Done, 700);
-    } else {
-      q3Idx++;
-      setTimeout(function(){ loadQ3(q3Idx); }, 700);
-    }
-  } else {
-    var colEls2 = document.querySelectorAll('.col-hdr');
-    if (colEls2[c]) shake(colEls2[c]);
-    document.getElementById('qHint').textContent = '再想想看，這個數字是哪項運動的？';
-  }
 }
 
 function showStage3Done() {
   document.getElementById('doneBanner').style.display = 'block';
   document.getElementById('doneBanner').style.background = '#00b894';
-  document.getElementById('doneText').textContent = '三關全部完成！你已經掌握一維表格的查值和反推了！';
+  document.getElementById('doneText').textContent = '三關全部完成！你已經掌握一維表格的讀法了！';
   document.getElementById('nextBtn').textContent = '返回首頁';
-  document.getElementById('nextBtn').onclick = function(){ window.location.href='index.html'; };
+  document.getElementById('nextBtn').onclick = function() { window.location.href = 'index.html'; };
 }
 
 // ─── Init ───
-stage = 1;
-document.getElementById('tab1').classList.add('active');
 loadQ1(0);
 </script>
 </body>
