@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>讀一維表格</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Noto Sans TC', sans-serif; background: #f0f4ff; min-height: 100vh; }
+
+    /* Hero */
+    .hero { background: linear-gradient(135deg, #0984e3, #74b9ff);
+            padding: 20px; text-align: center; color: #fff; }
+    .hero-back { font-size: 13px; opacity: .8; text-decoration: none; color: #fff;
+                 display: inline-block; margin-bottom: 8px; }
+    .hero-title { font-size: 20px; font-weight: bold; }
+
+    /* Progress */
+    .prog-wrap { background: #fff; padding: 10px 16px; display: flex;
+                 align-items: center; gap: 10px; border-bottom: 1px solid #eee; }
+    .prog-bar { flex: 1; height: 8px; background: #e8eaf6; border-radius: 4px; overflow: hidden; }
+    .prog-fill { height: 100%; background: #0984e3; border-radius: 4px; transition: width .4s; }
+    .prog-label { font-size: 12px; color: #888; white-space: nowrap; }
+
+    /* Stage tabs */
+    .stage-tabs { display: flex; gap: 0; background: #fff; border-bottom: 2px solid #e0e7ff; }
+    .stage-tab { flex: 1; padding: 10px; text-align: center; font-size: 13px; font-weight: bold;
+                 color: #aaa; cursor: default; }
+    .stage-tab.active { color: #0984e3; border-bottom: 2px solid #0984e3; margin-bottom: -2px; }
+
+    /* Main content */
+    .wrap { max-width: 680px; margin: 0 auto; padding: 16px 12px; }
+
+    /* Question card */
+    .q-card { background: #fff; border-radius: 16px; padding: 16px 20px;
+              box-shadow: 0 2px 12px rgba(74,108,247,.10); margin-bottom: 14px;
+              font-size: 15px; font-weight: bold; color: #333; line-height: 1.6; }
+    .q-hint { font-size: 12px; color: #0984e3; margin-top: 6px; font-weight: normal; }
+
+    /* Table */
+    .tbl-wrap { background: #fff; border-radius: 16px; overflow: hidden;
+                box-shadow: 0 2px 12px rgba(74,108,247,.10); }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 10px 8px; text-align: center; border-bottom: 1px solid #f0f0f0; }
+    th { background: #f8f9ff; font-weight: bold; color: #555; }
+    .row-hdr { font-weight: bold; color: #444; cursor: pointer; transition: background .15s; }
+    .col-hdr { cursor: pointer; transition: background .15s; }
+    .data-cell { cursor: pointer; transition: all .2s; }
+    .total-row td, .total-row th { background: #f0f4ff; font-weight: bold; color: #0984e3; }
+
+    /* Highlight states */
+    .row-hdr.hl-row { background: #ffe3e0 !important; color: #c0392b !important; }
+    .col-hdr.hl-col { background: #dbeeff !important; color: #2980b9 !important; }
+    .data-cell.hl-row-cell { background: #ffe8e6; }
+    .data-cell.hl-col-cell { background: #dbeeff; }
+    .data-cell.hl-cross {
+      background: #e74c3c !important; color: white !important;
+      font-weight: bold; transform: scale(1.25); border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(231,76,60,.4); opacity: 1 !important;
+    }
+    .data-cell.dim { opacity: 0.15; }
+
+    /* Correct checkmark overlay */
+    .check-overlay { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+                     font-size: 72px; pointer-events: none; z-index: 100;
+                     opacity: 0; transition: opacity .2s; }
+    .check-overlay.show { opacity: 1; }
+
+    /* Done banner */
+    .done-banner { background: #00b894; color: #fff; border-radius: 16px;
+                   padding: 24px; text-align: center; display: none; }
+    .done-banner h2 { font-size: 22px; margin-bottom: 8px; }
+    .done-banner p { font-size: 14px; opacity: .85; margin-bottom: 16px; }
+    .next-btn { background: #fff; color: #00b894; border: none; border-radius: 10px;
+                padding: 10px 28px; font-size: 15px; font-weight: bold; cursor: pointer; }
+
+    /* Shake */
+    @keyframes shake {
+      0%,100%{transform:translateX(0)}
+      20%{transform:translateX(-6px)} 40%{transform:translateX(6px)}
+      60%{transform:translateX(-4px)} 80%{transform:translateX(4px)}
+    }
+    .shake { animation: shake 0.4s ease; }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <a class="hero-back" href="index.html">← 返回</a>
+  <div class="hero-title">📊 讀一維表格</div>
+</div>
+
+<div class="prog-wrap">
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  <div class="prog-label" id="progLabel">0 / 4</div>
+</div>
+
+<div class="stage-tabs">
+  <div class="stage-tab active" id="tab1">關卡一：查值</div>
+  <div class="stage-tab" id="tab2">關卡二：填空</div>
+  <div class="stage-tab" id="tab3">關卡三：反推</div>
+</div>
+
+<div class="wrap">
+  <div class="q-card" id="qCard">
+    <div id="qText">載入中...</div>
+    <div class="q-hint" id="qHint"></div>
+  </div>
+
+  <div class="tbl-wrap" id="tblWrap">
+    <!-- table injected by JS -->
+  </div>
+
+  <div class="done-banner" id="doneBanner">
+    <h2>🎉 關卡完成！</h2>
+    <p id="doneText">查值練習完成，繼續下一關！</p>
+    <button class="next-btn" id="nextBtn">下一關 →</button>
+  </div>
+</div>
+
+<div class="check-overlay" id="checkOverlay">✅</div>
+
+<script>
+var DATA = [
+  [12, 8, 15, 5],
+  [9, 14, 11, 6],
+  [16, 7, 13, 4],
+  [10, 11, 9, 10]
+];
+var ROW_LABELS = ['三甲','三乙','三丙','三丁'];
+var COL_LABELS = ['籃球','跑步','游泳','羽球'];
+var ROW_TOTALS = [40, 40, 40, 40];
+var COL_TOTALS = [47, 40, 48, 25];
+var GRAND_TOTAL = 160;
+
+var Q1 = [
+  { row: 1, col: 1, text: '三乙班喜歡跑步的有幾人？' },
+  { row: 0, col: 2, text: '三甲班喜歡游泳的有幾人？' },
+  { row: 2, col: 0, text: '三丙班喜歡籃球的有幾人？' },
+  { row: 3, col: 3, text: '三丁班喜歡羽球的有幾人？' }
+];
+
+var stage = 1;
+var qIdx  = 0;
+var selRow = -1;
+var selCol = -1;
+
+function shake(el) {
+  el.classList.remove('shake');
+  void el.offsetWidth;
+  el.classList.add('shake');
+  setTimeout(function(){ el.classList.remove('shake'); }, 400);
+}
+
+function showCheck() {
+  var ov = document.getElementById('checkOverlay');
+  ov.classList.add('show');
+  setTimeout(function(){ ov.classList.remove('show'); }, 600);
+}
+
+function updateProgress(done, total) {
+  document.getElementById('progFill').style.width = (done/total*100) + '%';
+  document.getElementById('progLabel').textContent = done + ' / ' + total;
+}
+
+function buildTable(showTotals, blankCells) {
+  blankCells = blankCells || [];
+  var html = '<table><thead><tr>';
+  html += '<th>　</th>';
+  for (var c = 0; c < 4; c++) {
+    html += '<th class="col-hdr" data-col="'+c+'" onclick="onColClick('+c+')">'+COL_LABELS[c]+'</th>';
+  }
+  if (showTotals) html += '<th>合計</th>';
+  html += '</tr></thead><tbody>';
+
+  for (var r = 0; r < 4; r++) {
+    html += '<tr>';
+    html += '<td class="row-hdr" data-row="'+r+'" onclick="onRowClick('+r+')">'+ROW_LABELS[r]+'</td>';
+    for (var cc = 0; cc < 4; cc++) {
+      var isBlank = blankCells.some(function(b){ return b.r===r && b.c===cc; });
+      if (isBlank) {
+        html += '<td class="data-cell blank-cell" id="cell-'+r+'-'+cc+'" data-r="'+r+'" data-c="'+cc+'" onclick="onBlankClick('+r+','+cc+')" style="background:#ffeaa7;cursor:pointer;">？</td>';
+      } else {
+        html += '<td class="data-cell" id="cell-'+r+'-'+cc+'" data-r="'+r+'" data-c="'+cc+'" onclick="onCellClick('+r+','+cc+')">'+DATA[r][cc]+'</td>';
+      }
+    }
+    if (showTotals) {
+      var isBlankTotal = blankCells.some(function(b){ return b.r===r && b.c===4; });
+      if (isBlankTotal) {
+        html += '<td class="data-cell blank-cell" id="cell-'+r+'-4" data-r="'+r+'" data-c="4" onclick="onBlankClick('+r+',4)" style="background:#ffeaa7;cursor:pointer;">？</td>';
+      } else {
+        html += '<td style="color:#0984e3;font-weight:bold;">'+ROW_TOTALS[r]+'</td>';
+      }
+    }
+    html += '</tr>';
+  }
+
+  if (showTotals) {
+    html += '<tr class="total-row"><th>合計</th>';
+    for (var tc = 0; tc < 4; tc++) {
+      var isBlankCol = blankCells.some(function(b){ return b.r===4 && b.c===tc; });
+      if (isBlankCol) {
+        html += '<td class="data-cell blank-cell" id="cell-4-'+tc+'" data-r="4" data-c="'+tc+'" onclick="onBlankClick(4,'+tc+')" style="background:#ffeaa7;cursor:pointer;">？</td>';
+      } else {
+        html += '<td>'+COL_TOTALS[tc]+'</td>';
+      }
+    }
+    html += '<td>'+GRAND_TOTAL+'</td></tr>';
+  }
+
+  html += '</tbody></table>';
+  document.getElementById('tblWrap').innerHTML = html;
+}
+
+function loadQ1(idx) {
+  qIdx = idx;
+  selRow = -1; selCol = -1;
+  var q = Q1[idx];
+  document.getElementById('qText').textContent = q.text;
+  document.getElementById('qHint').textContent = '提示：先點左側班級，再點上方運動項目，最後點交叉格。';
+  buildTable(true, []);
+  updateProgress(idx, 4);
+  clearHighlights();
+}
+
+function clearHighlights() {
+  document.querySelectorAll('.row-hdr').forEach(function(el){ el.className='row-hdr'; });
+  document.querySelectorAll('.col-hdr').forEach(function(el){ el.className='col-hdr'; });
+  document.querySelectorAll('.data-cell').forEach(function(el){
+    el.classList.remove('hl-row-cell','hl-col-cell','hl-cross','dim');
+  });
+}
+
+function onRowClick(r) {
+  if (stage !== 1) return;
+  selRow = r;
+  applyHighlight();
+}
+
+function onColClick(c) {
+  if (stage !== 1 && stage !== 3) return;
+  selCol = c;
+  if (stage === 1) applyHighlight();
+  if (stage === 3) checkReverse2(c);
+}
+
+function applyHighlight() {
+  document.querySelectorAll('.row-hdr').forEach(function(el){
+    var rr = parseInt(el.dataset.row);
+    el.className = 'row-hdr' + (rr===selRow ? ' hl-row' : '');
+  });
+  document.querySelectorAll('.col-hdr').forEach(function(el){
+    var cc = parseInt(el.dataset.col);
+    el.className = 'col-hdr' + (cc===selCol ? ' hl-col' : '');
+  });
+  document.querySelectorAll('.data-cell').forEach(function(el){
+    var rr = parseInt(el.dataset.r);
+    var cc = parseInt(el.dataset.c);
+    el.classList.remove('hl-row-cell','hl-col-cell','hl-cross','dim');
+    if (rr===selRow && cc===selCol && selRow>=0 && selCol>=0) {
+      el.classList.add('hl-cross');
+    } else if (rr===selRow && selRow>=0) {
+      el.classList.add('hl-row-cell');
+      if (selCol>=0) el.classList.add('dim');
+    } else if (cc===selCol && selCol>=0) {
+      el.classList.add('hl-col-cell');
+      if (selRow>=0) el.classList.add('dim');
+    } else if (selRow>=0 || selCol>=0) {
+      el.classList.add('dim');
+    }
+  });
+  if (selRow>=0 && selCol>=0) {
+    var cross = document.getElementById('cell-'+selRow+'-'+selCol);
+    if (cross) {
+      cross.classList.remove('dim','hl-row-cell','hl-col-cell');
+      cross.classList.add('hl-cross');
+    }
+  }
+}
+
+function onCellClick(r, c) {
+  if (stage !== 1) return;
+  var q = Q1[qIdx];
+  if (r === q.row && c === q.col && selRow === q.row && selCol === q.col) {
+    showCheck();
+    updateProgress(qIdx + 1, 4);
+    if (qIdx + 1 >= 4) {
+      setTimeout(showStage1Done, 700);
+    } else {
+      setTimeout(function(){ loadQ1(qIdx + 1); }, 700);
+    }
+  } else {
+    shake(document.getElementById('cell-'+r+'-'+c));
+    if (selRow < 0) {
+      document.getElementById('qHint').textContent = '先點左側的班級名稱！';
+    } else if (selCol < 0) {
+      document.getElementById('qHint').textContent = '再點上方的運動項目！';
+    } else {
+      document.getElementById('qHint').textContent = '再想想看，點了對的行和欄嗎？';
+    }
+  }
+}
+
+function showStage1Done() {
+  document.getElementById('doneBanner').style.display = 'block';
+  document.getElementById('doneBanner').style.background = '#0984e3';
+  document.getElementById('doneText').textContent = '查值練習完成！繼續到關卡二：填空。';
+  document.getElementById('nextBtn').onclick = function(){ startStage2(); };
+}
+
+// ─── Init ───
+stage = 1;
+document.getElementById('tab1').classList.add('active');
+loadQ1(0);
+</script>
+</body>
+</html>
