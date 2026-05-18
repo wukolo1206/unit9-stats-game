@@ -137,6 +137,20 @@ var TABLES = [
     rows: ['狗', '貓', '魚', '其他'],
     vals: [10, 7, 6, 3],
     total: 26
+  },
+  {
+    title: '宜蘭8月到12月平均降雨量統計表',
+    colLabel: '月份',
+    rows: ['8月', '9月', '10月', '11月', '12月'],
+    vals: [312, 448, 527, 389, 258],
+    total: 1934
+  },
+  {
+    title: '智成家5月生活費用支出表',
+    colLabel: '費用類別',
+    rows: ['飲食費', '水電費', '交通費', '娛樂費', '其他'],
+    vals: [4800, 1200, 900, 600, 500],
+    total: 8000
   }
 ];
 
@@ -144,7 +158,9 @@ var Q1 = [
   { t: 0, r: 1, text: '三甲班喜歡跑步的有幾人？' },
   { t: 0, r: 2, text: '三甲班喜歡游泳的有幾人？' },
   { t: 1, r: 0, text: '三年級最喜歡蘋果的有幾人？' },
-  { t: 1, r: 3, text: '三年級最喜歡葡萄的有幾人？' }
+  { t: 1, r: 3, text: '三年級最喜歡葡萄的有幾人？' },
+  { t: 3, r: 2, text: '10月的平均降雨量是幾毫米？' },
+  { t: 4, r: 0, text: '智成家5月的飲食費用是多少元？' }
 ];
 
 var BLANKS = [
@@ -153,13 +169,19 @@ var BLANKS = [
   { t: 0, r: -1, ans: 40, opts: [38, 40, 42],  q: '把四項運動的人數加起來，合計是多少？' },
   { t: 1, r: 1,  ans: 11, opts: [9, 11, 13],   q: '三年級最喜歡香蕉的有幾人？' },
   { t: 2, r: 2,  ans: 6,  opts: [5, 6, 8],     q: '三甲班家中飼養魚的有幾人？' },
-  { t: 2, r: -1, ans: 26, opts: [24, 26, 28],  q: '把四種寵物的人數加起來，合計是多少？' }
+  { t: 2, r: -1, ans: 26, opts: [24, 26, 28],  q: '把四種寵物的人數加起來，合計是多少？' },
+  { t: 3, r: 0,  ans: 312, opts: [298, 312, 325], q: '8月的平均降雨量是幾毫米？' },
+  { t: 3, r: 4,  ans: 258, opts: [248, 258, 268], q: '12月的平均降雨量是幾毫米？' },
+  { t: 4, r: 2,  ans: 900, opts: [800, 900, 1000], q: '5月的交通費用是多少元？' },
+  { t: 4, r: -1, ans: 8000, opts: [7800, 8000, 8200], q: '各項費用加起來，合計是多少元？' }
 ];
 
 var Q3 = [
   { t: 0, r: 1, text: '表格中「8」這個數字，代表哪一項運動的人數？' },
   { t: 0, r: 2, text: '表格中「15」這個數字，代表哪一項運動的人數？' },
-  { t: 2, r: 1, text: '表格中「7」這個數字，代表哪一種寵物的人數？' }
+  { t: 2, r: 1, text: '表格中「7」這個數字，代表哪一種寵物的人數？' },
+  { t: 3, r: 2, text: '表格中「527」這個數字，代表哪個月的降雨量？' },
+  { t: 4, r: 1, text: '表格中「1200」這個數字，代表哪一項費用？' }
 ];
 
 var stage = 1;
@@ -233,7 +255,7 @@ function loadQ1(idx) {
   document.getElementById('qText').textContent = q.text;
   document.getElementById('qHint').textContent = '找到對應的那一行，點一下。';
   buildTable(q.t, [], -99);
-  updateProgress(idx, 4);
+  updateProgress(idx, Q1.length);
   document.getElementById('doneBanner').style.display = 'none';
 }
 
@@ -246,8 +268,8 @@ function onLabelClick(r) {
       lbl.classList.add('selected');
       if (val) val.classList.add('hl-correct');
       showCheck();
-      updateProgress(q1Idx + 1, 4);
-      if (q1Idx + 1 >= 4) {
+      updateProgress(q1Idx + 1, Q1.length);
+      if (q1Idx + 1 >= Q1.length) {
         setTimeout(showStage1Done, 800);
       } else {
         setTimeout(function() { loadQ1(q1Idx + 1); }, 800);
@@ -267,8 +289,8 @@ function onLabelClick(r) {
       if (lbl3) lbl3.classList.add('selected');
       if (val3) val3.classList.add('hl-correct');
       showCheck();
-      updateProgress(q3Idx + 1, 3);
-      if (q3Idx + 1 >= 3) {
+      updateProgress(q3Idx + 1, Q3.length);
+      if (q3Idx + 1 >= Q3.length) {
         setTimeout(showStage3Done, 800);
       } else {
         q3Idx++;
@@ -296,7 +318,7 @@ function startStage2() {
   document.getElementById('doneBanner').style.display = 'none';
   document.getElementById('tab1').classList.remove('active');
   document.getElementById('tab2').classList.add('active');
-  updateProgress(0, 6);
+  updateProgress(0, BLANKS.length);
   loadBlank(0);
 }
 
@@ -323,7 +345,7 @@ function loadBlank(idx) {
 
   document.getElementById('qText').textContent = b.q;
   document.getElementById('qHint').textContent = '點一下「？」查看選項。';
-  updateProgress(idx, 6);
+  updateProgress(idx, BLANKS.length);
 
   var curId = (b.r === -1) ? 'val-total' : 'val-' + b.r;
   var cur = document.getElementById(curId);
@@ -365,8 +387,8 @@ function selectOption(r, val, ans, btn, wrap) {
     wrap.remove();
     optionsEl = null;
     showCheck();
-    updateProgress(blankIdx + 1, 6);
-    if (blankIdx + 1 >= 6) {
+    updateProgress(blankIdx + 1, BLANKS.length);
+    if (blankIdx + 1 >= BLANKS.length) {
       setTimeout(showStage2Done, 800);
     } else {
       setTimeout(function() { loadBlank(blankIdx + 1); }, 800);
@@ -392,7 +414,7 @@ function startStage3() {
   document.getElementById('doneBanner').style.display = 'none';
   document.getElementById('tab2').classList.remove('active');
   document.getElementById('tab3').classList.add('active');
-  updateProgress(0, 3);
+  updateProgress(0, Q3.length);
   loadQ3(0);
 }
 
@@ -402,7 +424,7 @@ function loadQ3(idx) {
   buildTable(q.t, [], q.r);
   document.getElementById('qText').textContent = q.text;
   document.getElementById('qHint').textContent = '點左側對應的項目名稱。';
-  updateProgress(idx, 3);
+  updateProgress(idx, Q3.length);
 }
 
 function showStage3Done() {
